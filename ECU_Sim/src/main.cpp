@@ -1,15 +1,19 @@
 #include <Arduino.h>
 #include "display.h"
+#include "sensorData.h"
 
 Display display;
+SensorData sensorData;
 
-void setup() {
-  Serial.begin(9600);
+void setup() 
+{
   pinMode(A0, INPUT);
-  display.begin();
+  display.begin(sensorData.getMphByRef(), sensorData.getRpmByRef());
 }
 
-void loop() {
-  Serial.println(analogRead(A0));
+void loop() 
+{
+  sensorData.update();
+  display.update();
   delay(500);
 }

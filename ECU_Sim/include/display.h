@@ -15,13 +15,12 @@
 class Display : public Adafruit_SSD1306
 {
 private:
-    /* data */
+    double *mph;
+    int *rpm;
 public:
     Display(/* args */);
-    ~Display();
-    void begin();
+    void begin(double* mph, int* rpm);
+    void update();
 };
-
-
 
 #endif
