@@ -6,10 +6,10 @@ Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET)
 {  
 }
 
-void Display::begin(double* mph, int* rpm) 
+void Display::begin(double* vehicleSpeed, double* engineSpeed) 
 {
-  this->mph = mph;
-  this->rpm = rpm;
+  this->vehicleSpeed = vehicleSpeed;
+  this->engineSpeed = engineSpeed;
   Adafruit_SSD1306::begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
   update();
 }
@@ -21,9 +21,9 @@ void Display::update()
   setTextColor(SSD1306_WHITE); 
   setCursor(0,0);       
   print(F("Speed: "));
-  print(*mph);
-  println(F(" mph"));
+  print((int) *vehicleSpeed);
+  println(F(" km/h"));
   print(F("  RPM: "));
-  println(*rpm);
+  println(*engineSpeed);
   display();
 }

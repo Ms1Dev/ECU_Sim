@@ -15,11 +15,11 @@
 class Display : public Adafruit_SSD1306
 {
 private:
-    double *mph;
-    int *rpm;
+    double *vehicleSpeed;
+    double *engineSpeed;
 public:
     Display(/* args */);
-    void begin(double* mph, int* rpm);
+    void begin(double* vehicleSpeed, double* engineSpeed);
     void update();
 };
 
