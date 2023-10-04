@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "sensorData.h"
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 32 
@@ -15,11 +16,10 @@
 class Display : public Adafruit_SSD1306
 {
 private:
-    double *vehicleSpeed;
-    double *engineSpeed;
+    SensorData* sensorData;
 public:
-    Display(/* args */);
-    void begin(double* vehicleSpeed, double* engineSpeed);
+    Display();
+    void begin(SensorData*);
     void update();
 };
 

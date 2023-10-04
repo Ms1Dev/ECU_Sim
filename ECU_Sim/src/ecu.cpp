@@ -1,11 +1,11 @@
-#include "sensorData.h"
+#include "ecu.h"
 
-SensorData::SensorData()
+Ecu::Ecu()
 {
     pinMode(potentiometerPin, INPUT);
 }
 
-void SensorData::update()
+void Ecu::update()
 {
     int potentiometerReading = analogRead(potentiometerPin);
     engineSpeed = map(potentiometerReading, 0, 1023, MINRPM, MAXRPM);
@@ -20,7 +20,7 @@ void SensorData::update()
 }
 
 
-void SensorData::calcSpeed() 
+void Ecu::calcSpeed() 
 {
     double secondsSinceLastUpdate = (millis() - lastUpdateMillis) / 1000.0;
     lastUpdateMillis = millis();
@@ -40,13 +40,13 @@ void SensorData::calcSpeed()
 }
 
 
-void SensorData::calcMAF(double engineSpeedPrcnt, double speedPrcnt) 
+void Ecu::calcMAF(double engineSpeedPrcnt, double speedPrcnt) 
 {
     MAF = (MAFMAX - MAFMIN) * engineSpeedPrcnt * speedPrcnt;
     if (MAF < MAFMIN) MAF = MAFMIN;
 }
 
-void SensorData::calcFuelRate() 
+void Ecu::calcFuelRate() 
 {
     double gramsPerSec = MAF / PETROL_STOICH_RATIO ;
     double mlPerSec = gramsPerSec * PETROL_GRAM_TO_ML;
@@ -55,37 +55,27 @@ void SensorData::calcFuelRate()
 }
 
 
-double *SensorData::getMphByRef() 
-{
-    return &vehicleSpeed;
-}
-
-double *SensorData::getRpmByRef() 
-{
-    return &engineSpeed;
-}
-
-int SensorData::getVehicleSpeed()
+int Ecu::getVehicleSpeed()
 {
     return (int) vehicleSpeed;
 }
 
-double SensorData::getEngineSpeed()
+double Ecu::getEngineSpeed()
 {
     return engineSpeed;
 }
 
-double SensorData::getMAF()
+double Ecu::getMAF()
 {
     return MAF;
 }
 
-int SensorData::getThrottlePosition()
+int Ecu::getThrottlePosition()
 {
     return throttlePosition;
 }
 
-double SensorData::getFuelRate()
+double Ecu::getFuelRate()
 {
     return fuelRate;
 }
