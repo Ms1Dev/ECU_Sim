@@ -6,18 +6,15 @@
 
 // #define SERIALOUTPUT
 
-#define REFRESH_RATE 4 //Hz
-#define UPDATE_DELAY 1000 / REFRESH_RATE
-
 Display display;
 Ecu ecu;
 Can_bus can_bus;
 
 void setup() 
 {
-  // #ifdef SERIALOUTPUT
+  #ifdef SERIALOUTPUT
   Serial.begin(9600);
-  // #endif
+  #endif
 
   pinMode(A0, INPUT);
 
@@ -41,12 +38,7 @@ void loop()
 {
   ecu.update();
   display.update();
-
-
-  uint16_t rpm = 4 * ecu.getEngineSpeed();
-  uint8_t low_byte = rpm & 0xFF;
-  uint8_t high_byte = rpm >> 8;
-
+  can_bus.update();
 
   #ifdef SERIALOUTPUT
   Serial.println("------------------------------");
@@ -61,6 +53,4 @@ void loop()
   Serial.print("Fuel Rate: ");
   Serial.println(ecu.getFuelRate());
   #endif
-
-  delay(UPDATE_DELAY);
 }

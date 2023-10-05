@@ -17,6 +17,8 @@ class Display : public Adafruit_SSD1306
 {
 private:
     SensorData* sensorData;
+    const int REFRESH_RATE = 250;
+    unsigned long lastUpdate = 0;
 public:
     Display();
     void begin(SensorData*);

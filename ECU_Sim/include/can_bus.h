@@ -20,7 +20,7 @@ private:
 
     SensorData* sensorData;
 
-    void sendMessage(uint8_t pid);
+    void sendResponse(uint8_t pid);
 public:
     Can_bus();
     bool begin(SensorData*);

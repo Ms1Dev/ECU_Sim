@@ -19,6 +19,8 @@ class Ecu : public SensorData
     const int potentiometerPin = A0;
     double speedRpmDiff_prcnt = 0;
     unsigned long lastUpdateMillis = 0;
+    const int REFRESH_RATE = 250;
+    unsigned long lastUpdate = 0;
 
     double vehicleSpeed = 0; // kmh
     double engineSpeed = 0; // rpm
@@ -26,7 +28,7 @@ class Ecu : public SensorData
     int throttlePosition = 0; // %
     double fuelRate = 0; // L/h
 
-    void calcSpeed();
+    void calcSpeed(unsigned int actualRefreshRate);
     void calcEngineLoad();
     void calcMAF(double engineSpeedPrcnt, double speedPrcnt);
     void calcFuelRate();

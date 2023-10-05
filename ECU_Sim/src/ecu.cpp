@@ -7,23 +7,27 @@ Ecu::Ecu()
 
 void Ecu::update()
 {
-    int potentiometerReading = analogRead(potentiometerPin);
-    engineSpeed = map(potentiometerReading, 0, 1023, MINRPM, MAXRPM);
-    double engineSpeedPrcnt = (1.0 / (MAXRPM - MINRPM)) * (engineSpeed - MINRPM);
-    double speedPrcnt = (1.0 / MAXSPEED) * vehicleSpeed;
-    speedRpmDiff_prcnt = engineSpeedPrcnt - speedPrcnt; 
-    throttlePosition = engineSpeedPrcnt * 100;
+    if (lastUpdate + REFRESH_RATE < millis()) {
+        unsigned int actualRefreshRate = millis() - lastUpdate;
+        lastUpdate = millis();
+        
+        int potentiometerReading = analogRead(potentiometerPin);
+        engineSpeed = map(potentiometerReading, 0, 1023, MINRPM, MAXRPM);
+        double engineSpeedPrcnt = (1.0 / (MAXRPM - MINRPM)) * (engineSpeed - MINRPM);
+        double speedPrcnt = (1.0 / MAXSPEED) * vehicleSpeed;
+        speedRpmDiff_prcnt = engineSpeedPrcnt - speedPrcnt; 
+        throttlePosition = engineSpeedPrcnt * 100;
 
-    calcSpeed();
-    calcMAF(engineSpeedPrcnt, speedPrcnt);
-    calcFuelRate();
+        calcSpeed(actualRefreshRate);
+        calcMAF(engineSpeedPrcnt, speedPrcnt);
+        calcFuelRate();
+    }
 }
 
 
-void Ecu::calcSpeed() 
+void Ecu::calcSpeed(unsigned int actualRefreshRate) 
 {
-    double secondsSinceLastUpdate = (millis() - lastUpdateMillis) / 1000.0;
-    lastUpdateMillis = millis();
+    double secondsSinceLastUpdate = actualRefreshRate / 1000.0;
     double accel = ACCEL * secondsSinceLastUpdate;
     double speedChangeKPH = accel * 3.6;
 

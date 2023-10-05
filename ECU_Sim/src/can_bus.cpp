@@ -3,8 +3,8 @@
 
 
 bool Can_bus::receiveFlag = false;
-uint8_t len = 0;
-
+uint8_t Can_bus::len = 0;
+uint8_t Can_bus::buf[8];
 
 Can_bus::Can_bus() :
 mcp2515_can(SPI_CS_PIN)
@@ -30,12 +30,12 @@ void Can_bus::update()
         receiveFlag = false;
         readMsgBuf(&len, buf);
         uint8_t pid = buf[2];
-        sendMessage(pid);
+        sendResponse(pid);
     }
 }
 
 
-void Can_bus::sendMessage(uint8_t pid)
+void Can_bus::sendResponse(uint8_t pid)
 {
     uint8_t msgBuf[8];
     uint16_t data;
