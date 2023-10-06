@@ -16,6 +16,8 @@ bool Can_bus::begin(SensorData* sensorData)
 {
     this->sensorData = sensorData;
 
+    attachInterrupt(digitalPinToInterrupt(CAN_INT_PIN), Can_bus::CANBUS_ISR, FALLING); 
+
     for (int i = 0; i < 10; i++) {
         if (mcp2515_can::begin(CAN_BAUDRATE) == CAN_OK) return true;
         delay(100);
@@ -44,89 +46,84 @@ void Can_bus::sendResponse(uint8_t pid)
 
     switch (pid) {
     case 0:
-        msgBuf[0] = 6;
-        msgBuf[1] = 65;
-        msgBuf[2] = 0;            
-        msgBuf[3] = 255;
-        msgBuf[4] = 255;
-        msgBuf[5] = 255;
-        msgBuf[6] = 255;
-        msgBuf[7] = 170;
+        msgBuf[0] = 0x06;
+        msgBuf[1] = 0x41;
+        msgBuf[2] = 0x00;            
+        msgBuf[3] = 0;
+        msgBuf[4] = 0;
+        msgBuf[5] = 0;
+        msgBuf[6] = 0;
+        msgBuf[7] = 0;
         break;
     case 12: // rpm
         data = 4 * sensorData->getEngineSpeed();
         low_byte = data & 0xFF;
         high_byte = data >> 8;
 
-        msgBuf[0] = 4;
-        msgBuf[1] = 65;
-        msgBuf[2] = 12;            
+        msgBuf[0] = 0x04;
+        msgBuf[1] = 0x41;
+        msgBuf[2] = 0x0C;            
         msgBuf[3] = high_byte;
         msgBuf[4] = low_byte;
-        msgBuf[5] = 170;
-        msgBuf[6] = 170;
-        msgBuf[7] = 170;
+        msgBuf[5] = 0;
+        msgBuf[6] = 0;
+        msgBuf[7] = 0;
         break;
     case 13: // speed
         high_byte = sensorData->getVehicleSpeed();
-        msgBuf[0] = 3;
-        msgBuf[1] = 65;
-        msgBuf[2] = 13;            
+        msgBuf[0] = 0x03;
+        msgBuf[1] = 0x41;
+        msgBuf[2] = 0x0D;            
         msgBuf[3] = high_byte;
-        msgBuf[4] = 170;
-        msgBuf[5] = 170;
-        msgBuf[6] = 170;
-        msgBuf[7] = 170;
+        msgBuf[4] = 0;
+        msgBuf[5] = 0;
+        msgBuf[6] = 0;
+        msgBuf[7] = 0;
         break;
     case 16: // MAF
         data = 100 * sensorData->getMAF();
         low_byte = data & 0xFF;
         high_byte = data >> 8;
-        msgBuf[0] = 4;
-        msgBuf[1] = 65;
-        msgBuf[2] = 16;            
+        msgBuf[0] = 0x04;
+        msgBuf[1] = 0x41;
+        msgBuf[2] = 0x10;            
         msgBuf[3] = high_byte;
         msgBuf[4] = low_byte;
-        msgBuf[5] = 170;
-        msgBuf[6] = 170;
-        msgBuf[7] = 170;
+        msgBuf[5] = 0;
+        msgBuf[6] = 0;
+        msgBuf[7] = 0;
         break;
     case 17: // throttle pos
-        high_byte = sensorData->getThrottlePosition();
-        msgBuf[0] = 3;
-        msgBuf[1] = 65;
-        msgBuf[2] = 17;            
+        high_byte = 255 * (sensorData->getThrottlePosition() / 100.0);
+        msgBuf[0] = 0x03;
+        msgBuf[1] = 0x41;
+        msgBuf[2] = 0x11;            
         msgBuf[3] = high_byte;
-        msgBuf[4] = 170;
-        msgBuf[5] = 170;
-        msgBuf[6] = 170;
-        msgBuf[7] = 170;
+        msgBuf[4] = 0;
+        msgBuf[5] = 0;
+        msgBuf[6] = 0;
+        msgBuf[7] = 0;
         break;
     case 94: // fuel rate
         data = 20 * sensorData->getFuelRate();
         low_byte = data & 0xFF;
         high_byte = data >> 8;
-        msgBuf[0] = 4;
-        msgBuf[1] = 65;
-        msgBuf[2] = 94;            
+        msgBuf[0] = 0x04;
+        msgBuf[1] = 0x41;
+        msgBuf[2] = 0x5E;            
         msgBuf[3] = high_byte;
         msgBuf[4] = low_byte;
-        msgBuf[5] = 170;
-        msgBuf[6] = 170;
-        msgBuf[7] = 170;
+        msgBuf[5] = 0;
+        msgBuf[6] = 0;
+        msgBuf[7] = 0;
         break;
     }
-    sendMsgBuf(0,0,8,msgBuf);
+    sendMsgBuf(2024,0,8,msgBuf);
 }
 
 
-void Can_bus::setReceiveFlag() 
+void Can_bus::CANBUS_ISR()
 {
     receiveFlag = true;
 }
 
-
-void MCP2515_ISR() 
-{
-    Can_bus::setReceiveFlag();
-}

@@ -21,6 +21,7 @@ private:
     SensorData* sensorData;
 
     void sendResponse(uint8_t pid);
+    static void CANBUS_ISR();
 public:
     Can_bus();
     bool begin(SensorData*);
