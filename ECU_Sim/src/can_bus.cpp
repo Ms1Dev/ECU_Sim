@@ -39,85 +39,66 @@ void Can_bus::update()
 
 void Can_bus::sendResponse(uint8_t pid)
 {
+    uint8_t mode = 0x41; 
     uint8_t msgBuf[8];
     uint16_t data;
-    uint8_t high_byte;
-    uint8_t low_byte;
+
+    msgBuf[1] = mode;
+    msgBuf[2] = pid;
 
     switch (pid) {
-    case 0:
-        msgBuf[0] = 0x06;
-        msgBuf[1] = 0x41;
-        msgBuf[2] = 0x00;            
-        msgBuf[3] = 0;
-        msgBuf[4] = 0;
-        msgBuf[5] = 0;
-        msgBuf[6] = 0;
-        msgBuf[7] = 0;
+    case 0: // Supported PIDS
+        msgBuf[0] = 0x06;           
+        msgBuf[3] = 0xFF;
+        msgBuf[4] = 0xFF;
+        msgBuf[5] = 0xFF;
+        msgBuf[6] = 0xFF;
         break;
-    case 12: // rpm
+    case 0x20: // Supported PIDS
+        msgBuf[0] = 0x06;           
+        msgBuf[3] = 0xFF;
+        msgBuf[4] = 0xFF;
+        msgBuf[5] = 0xFF;
+        msgBuf[6] = 0xFF;
+        break;
+    case 0x40: // Supported PIDS
+        msgBuf[0] = 0x06;           
+        msgBuf[3] = 0xFF;
+        msgBuf[4] = 0xFF;
+        msgBuf[5] = 0xFF;
+        msgBuf[6] = 0xFF;
+        break;
+    case 0x0C: // rpm
         data = 4 * sensorData->getEngineSpeed();
-        low_byte = data & 0xFF;
-        high_byte = data >> 8;
 
         msgBuf[0] = 0x04;
-        msgBuf[1] = 0x41;
-        msgBuf[2] = 0x0C;            
-        msgBuf[3] = high_byte;
-        msgBuf[4] = low_byte;
-        msgBuf[5] = 0;
-        msgBuf[6] = 0;
-        msgBuf[7] = 0;
+        msgBuf[3] = data >> 8;
+        msgBuf[4] = data & 0xFF;
         break;
-    case 13: // speed
-        high_byte = sensorData->getVehicleSpeed();
+    case 0x0D: // speed
         msgBuf[0] = 0x03;
-        msgBuf[1] = 0x41;
-        msgBuf[2] = 0x0D;            
-        msgBuf[3] = high_byte;
-        msgBuf[4] = 0;
-        msgBuf[5] = 0;
-        msgBuf[6] = 0;
-        msgBuf[7] = 0;
+        msgBuf[3] = sensorData->getVehicleSpeed();
         break;
-    case 16: // MAF
+    case 0x10: // MAF
         data = 100 * sensorData->getMAF();
-        low_byte = data & 0xFF;
-        high_byte = data >> 8;
+
         msgBuf[0] = 0x04;
-        msgBuf[1] = 0x41;
-        msgBuf[2] = 0x10;            
-        msgBuf[3] = high_byte;
-        msgBuf[4] = low_byte;
-        msgBuf[5] = 0;
-        msgBuf[6] = 0;
-        msgBuf[7] = 0;
+        msgBuf[3] = data >> 8;
+        msgBuf[4] = data & 0xFF;
         break;
-    case 17: // throttle pos
-        high_byte = 255 * (sensorData->getThrottlePosition() / 100.0);
-        msgBuf[0] = 0x03;
-        msgBuf[1] = 0x41;
-        msgBuf[2] = 0x11;            
-        msgBuf[3] = high_byte;
-        msgBuf[4] = 0;
-        msgBuf[5] = 0;
-        msgBuf[6] = 0;
-        msgBuf[7] = 0;
+    case 0x11: // throttle pos
+        msgBuf[0] = 0x03;          
+        msgBuf[3] = (255 * sensorData->getThrottlePosition()) / 100.0;
         break;
-    case 94: // fuel rate
+    case 0x5E: // fuel rate
         data = 20 * sensorData->getFuelRate();
-        low_byte = data & 0xFF;
-        high_byte = data >> 8;
-        msgBuf[0] = 0x04;
-        msgBuf[1] = 0x41;
-        msgBuf[2] = 0x5E;            
-        msgBuf[3] = high_byte;
-        msgBuf[4] = low_byte;
-        msgBuf[5] = 0;
-        msgBuf[6] = 0;
-        msgBuf[7] = 0;
+
+        msgBuf[0] = 0x04;         
+        msgBuf[3] = data >> 8;
+        msgBuf[4] = data & 0xFF;
         break;
     }
+
     sendMsgBuf(2024,0,8,msgBuf);
 }
 
