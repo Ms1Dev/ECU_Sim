@@ -15,8 +15,10 @@ mcp2515_can(SPI_CS_PIN)
 bool Can_bus::begin(SensorData* sensorData) 
 {
     this->sensorData = sensorData;
+    
+    // pinMode(CAN_INT_PIN, INPUT);
 
-    attachInterrupt(digitalPinToInterrupt(CAN_INT_PIN), Can_bus::CANBUS_ISR, FALLING); 
+    // attachInterrupt(digitalPinToInterrupt(CAN_INT_PIN), Can_bus::CANBUS_ISR, RISING); 
 
     for (int i = 0; i < 10; i++) {
         if (mcp2515_can::begin(CAN_BAUDRATE) == CAN_OK) return true;
@@ -28,8 +30,8 @@ bool Can_bus::begin(SensorData* sensorData)
 
 void Can_bus::update()
 {
-    if (receiveFlag) {
-        receiveFlag = false;
+    if (CAN_MSGAVAIL == checkReceive()) {
+        // receiveFlag = false;
         readMsgBuf(&len, buf);
         uint8_t pid = buf[2];
         sendResponse(pid);
@@ -103,8 +105,8 @@ void Can_bus::sendResponse(uint8_t pid)
 }
 
 
-void Can_bus::CANBUS_ISR()
-{
-    receiveFlag = true;
-}
+// void Can_bus::CANBUS_ISR()
+// {
+//     receiveFlag = true;
+// }
 
