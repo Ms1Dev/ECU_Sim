@@ -9,6 +9,9 @@ public:
     virtual double getMAF() = 0;
     virtual int getThrottlePosition() = 0;
     virtual double getFuelRate() = 0;
+    virtual int getCalculatedLoad() = 0;
+    virtual int getIntakeTemperature() = 0;
+    virtual int getIntakePressure() = 0;
 };
 
 #endif

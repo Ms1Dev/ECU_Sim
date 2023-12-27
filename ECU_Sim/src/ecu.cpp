@@ -21,6 +21,8 @@ void Ecu::update()
         calcSpeed(actualRefreshRate);
         calcMAF(engineSpeedPrcnt, speedPrcnt);
         calcFuelRate();
+        calcIntakePressure(engineSpeedPrcnt);
+        calcEngineLoad();
     }
 }
 
@@ -58,6 +60,31 @@ void Ecu::calcFuelRate()
     fuelRate = mlPerHour / 1000;
 }
 
+void Ecu::calcIntakePressure(double engineSpeedPrcnt)
+{
+    intakePressure = (INTAKEPRESSURE_MAX - INTAKEPRESSURE_MIN) * engineSpeedPrcnt + INTAKEPRESSURE_MIN;
+}
+
+void Ecu::calcEngineLoad()
+{
+    double mafPercent = (1.0 / MAFMAX) * MAF;
+    engineLoad = mafPercent + 0.5;
+}
+
+int Ecu::getIntakeTemperature()
+{
+    return intakeTemperature;
+}
+
+int Ecu::getCalculatedLoad()
+{
+    return engineLoad;
+}
+
+int Ecu::getIntakePressure() 
+{
+    return intakePressure;
+}
 
 int Ecu::getVehicleSpeed()
 {

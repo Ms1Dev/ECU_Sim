@@ -20,7 +20,8 @@ private:
 
     SensorData* sensorData;
 
-    void sendResponse(uint8_t pid);
+    void sendCurrentData(uint8_t pid);
+    void sendVehicleData(uint8_t pid);
     static void CANBUS_ISR();
 public:
     Can_bus();
