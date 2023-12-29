@@ -1,6 +1,9 @@
 #include "ecu.h"
 
 Ecu::Ecu()
+{}
+
+void Ecu::begin()
 {
     pinMode(potentiometerPin, INPUT);
 }

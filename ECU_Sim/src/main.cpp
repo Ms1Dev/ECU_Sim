@@ -2,22 +2,27 @@
 #include "display.h"
 #include "ecu.h"
 #include "can_bus.h"
+#include "mode_select.h"
 
 
 Display display;
 Ecu ecu;
 Can_bus can_bus;
+Mode_select mode_select;
 
 void setup() 
 {
-  pinMode(A0, INPUT);
-
+  ecu.begin();
   display.begin(&ecu);
+  mode_select.begin();
+
+  // int mode = mode_select.getMode();
+  int mode = 0;
 
   display.clearDisplay();
   display.setCursor(0,0);
 
-  if (can_bus.begin(&ecu)) {
+  if (can_bus.begin(&ecu, mode)) {
     display.println("CAN BUS init success");
   }
   else {

@@ -18,16 +18,19 @@ private:
     static uint8_t len;
     static uint8_t buf[8];
 
+    uint8_t supportedPids[28] = {};
+
     SensorData* sensorData;
 
     void sendCurrentData(uint8_t pid);
     void sendVehicleData(uint8_t pid);
-    static void CANBUS_ISR();
+    void addSupportedPid(uint8_t pid);
+    void getSupportedPidResponse(uint8_t pid, uint8_t *msgBuf);
+    void getDataResponse(uint8_t pid, uint8_t *msgBuf);
 public:
     Can_bus();
-    bool begin(SensorData*);
+    bool begin(SensorData*, int mode);
     void update();
-    static void setReceiveFlag();
 };
 
 

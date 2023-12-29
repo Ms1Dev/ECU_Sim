@@ -15,7 +15,7 @@
 #define PETROL_GRAM_TO_ML 1.35
 #define INTAKEPRESSURE_MIN 33
 #define INTAKEPRESSURE_MAX 100
-#define INTAKE_TEMPERATURE 25
+#define INTAKE_TEMPERATURE 25 + 273
 
 class Ecu : public SensorData
 {
@@ -24,15 +24,15 @@ class Ecu : public SensorData
     unsigned long lastUpdateMillis = 0;
     const int REFRESH_RATE = 250;
     unsigned long lastUpdate = 0;
-
+    
     double vehicleSpeed = 0; // kmh
     double engineSpeed = 0; // rpm
     double MAF = 0; // g/s
     int throttlePosition = 0; // %
     double fuelRate = 0; // L/h
-    int intakePressure = 0;
-    int intakeTemperature = INTAKE_TEMPERATURE;
-    int engineLoad = 0;
+    int intakePressure = 0; // kPa
+    int intakeTemperature = INTAKE_TEMPERATURE; // kelvin
+    int engineLoad = 0; // %
 
     void calcSpeed(unsigned int actualRefreshRate);
     void calcMAF(double engineSpeedPrcnt, double speedPrcnt);
@@ -41,6 +41,7 @@ class Ecu : public SensorData
     void calcFuelRate();
 public:
     Ecu();
+    void begin();
     void update();
     int getVehicleSpeed();
     double getEngineSpeed();
