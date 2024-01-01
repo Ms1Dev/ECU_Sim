@@ -16,8 +16,7 @@ void setup()
   display.begin(&ecu);
   mode_select.begin();
 
-  // int mode = mode_select.getMode();
-  int mode = 0;
+  int mode = mode_select.getMode();
 
   display.clearDisplay();
   display.setCursor(0,0);

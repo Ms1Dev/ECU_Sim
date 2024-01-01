@@ -6,8 +6,21 @@
 class Mode_select
 {
 private:
-    class Switch;
-    Switch *switches[NUM_SWITCHES];
+    class Switch
+        {
+        private:
+            int pin;
+        public:
+            Switch(int pin);
+            int getPinNum();
+            bool readVal();
+    };
+    Switch switches[NUM_SWITCHES] = {
+        Switch(4),
+        Switch(5),
+        Switch(6),
+        Switch(7)
+    };
     int mode = -1;
 public:
     Mode_select();

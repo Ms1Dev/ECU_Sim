@@ -13,9 +13,14 @@ mcp2515_can(SPI_CS_PIN)
 
 
 bool Can_bus::begin(SensorData* sensorData, int mode) 
-{
+{    
+    Serial.begin(115200);
+
     this->sensorData = sensorData;
-    modes::OBD_Mode obd_mode = modes::obd_modes[mode];
+
+    if (mode > modes::mode_count) mode = modes::OBD_Mode::default_mode;
+
+    modes::OBD_Mode obd_mode = modes::obd_modes[mode]; // mode
 
     for (int i = 0; i < obd_mode.pidCount; i++) {
         addSupportedPid(obd_mode.supportedPids[i]);
@@ -32,6 +37,47 @@ bool Can_bus::begin(SensorData* sensorData, int mode)
 }
 
 
+void Can_bus::update()
+{
+    if (CAN_MSGAVAIL == checkReceive()) {
+        // receiveFlag = false;
+        readMsgBuf(&len, buf);
+        uint8_t mode = buf[1];
+        uint8_t pid = buf[2];
+
+        switch (mode)
+        {
+        case 1:
+            sendCurrentData(pid);
+            break;
+        case 9:
+            sendVehicleData(pid);
+            break;
+        }
+    }
+}
+
+
+void Can_bus::sendCurrentData(uint8_t pid)
+{
+    uint8_t mode = 0x41; 
+    const int buflen = 8;
+    uint8_t msgBuf[buflen];
+    
+    msgBuf[1] = mode;
+    msgBuf[2] = pid;
+
+    if (pid % 0x20 == 0) {
+        getSupportedPidResponse(pid, msgBuf);
+    }
+    else {
+        getDataResponse(pid, msgBuf);
+    }
+
+    sendMsgBuf(2024,0,buflen,msgBuf);
+}
+
+
 void Can_bus::addSupportedPid(uint8_t pid)
 {
     uint8_t shiftedPid = pid -1;
@@ -43,12 +89,13 @@ void Can_bus::addSupportedPid(uint8_t pid)
 
 void Can_bus::getSupportedPidResponse(uint8_t pid, uint8_t *msgBuf)
 {
-    uint8_t startIndex = pid / 0x20;
+    uint8_t startIndex = pid / 0x20 * 4;
     msgBuf[0] = 0x06;           
     for (int i = 0; i < 4; i++) {
         msgBuf[3 + i] = supportedPids[startIndex + i];
     }
 }
+
 
 void Can_bus::getDataResponse(uint8_t pid, uint8_t *msgBuf)
 {
@@ -106,46 +153,6 @@ void Can_bus::getDataResponse(uint8_t pid, uint8_t *msgBuf)
                 msgBuf[7] = data & 0xFF;
                 break;
         }
-}
-
-void Can_bus::update()
-{
-    if (CAN_MSGAVAIL == checkReceive()) {
-        // receiveFlag = false;
-        readMsgBuf(&len, buf);
-        uint8_t mode = buf[1];
-        uint8_t pid = buf[2];
-
-        switch (mode)
-        {
-        case 1:
-            sendCurrentData(pid);
-            break;
-        case 9:
-            sendVehicleData(pid);
-            break;
-        }
-    }
-}
-
-
-void Can_bus::sendCurrentData(uint8_t pid)
-{
-    uint8_t mode = 0x41; 
-    const int buflen = 8;
-    uint8_t msgBuf[buflen];
-    
-    msgBuf[1] = mode;
-    msgBuf[2] = pid;
-
-    if (pid % 0x20 == 0) {
-        getSupportedPidResponse(pid, msgBuf);
-    }
-    else {
-        getDataResponse(pid, msgBuf);
-    }
-
-    sendMsgBuf(2024,0,buflen,msgBuf);
 }
 
 
