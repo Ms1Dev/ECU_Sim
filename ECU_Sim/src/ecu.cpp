@@ -86,22 +86,22 @@ int Ecu::getCalculatedLoad()
 
 int Ecu::getIntakePressure() 
 {
-    return intakePressure;
+    return engineRunning? intakePressure : INTAKEPRESSURE_MIN;
 }
 
 int Ecu::getVehicleSpeed()
 {
-    return (int) vehicleSpeed;
+    return (int) engineRunning? vehicleSpeed : 0;
 }
 
 double Ecu::getEngineSpeed()
 {
-    return engineSpeed;
+    return engineRunning? engineSpeed : 0;
 }
 
 double Ecu::getMAF()
 {
-    return MAF;
+    return engineRunning? MAF : 0;
 }
 
 int Ecu::getThrottlePosition()
@@ -111,5 +111,10 @@ int Ecu::getThrottlePosition()
 
 double Ecu::getFuelRate()
 {
-    return fuelRate;
+    return engineRunning? fuelRate : 0;
+}
+
+void Ecu::startStop()
+{
+    engineRunning = !engineRunning;
 }

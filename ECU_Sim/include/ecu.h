@@ -24,6 +24,7 @@ class Ecu : public SensorData
     unsigned long lastUpdateMillis = 0;
     const int REFRESH_RATE = 250;
     unsigned long lastUpdate = 0;
+    bool engineRunning = false;
     
     double vehicleSpeed = 0; // kmh
     double engineSpeed = 0; // rpm
@@ -51,6 +52,7 @@ public:
     int getIntakeTemperature();
     int getCalculatedLoad();
     double getFuelRate();
+    void startStop();
 };
 
 #endif
