@@ -2,7 +2,7 @@
 
 ### Overview
 
-I created this device to help with developing a Java Android application for a university project. The app connected to a Bluetooth OBD-II device and so this allowed for development without the need for a vehicle.
+I created this device to help with developing a Java Android application for university called <a href="https://github.com/Ms1Dev/Hypermile">Hypermile</a>. The app connected to a Bluetooth OBD-II device and so this allowed for development without the need for a vehicle.
 
 ### Requirements
 
